@@ -1,4 +1,6 @@
 let quotes = [];
+const serverUrl = 'https://jsonplaceholder.typicode.com/posts'; // Simulated server URL
+const syncInterval = 60000; // 60 seconds
 
 // Load quotes and last selected category from local storage on page load
 function loadQuotes() {
@@ -20,6 +22,40 @@ function loadQuotes() {
 // Save quotes to local storage
 function saveQuotes() {
     localStorage.setItem('quotes', JSON.stringify(quotes));
+}
+
+// Fetch quotes from the simulated server
+async function fetchQuotesFromServer() {
+    try {
+        const response = await fetch(serverUrl);
+        const serverQuotes = await response.json();
+        
+        // Simulate the server response containing quotes
+        handleServerResponse(serverQuotes);
+    } catch (error) {
+        console.error('Error fetching quotes from server:', error);
+    }
+}
+
+// Handle server response and resolve conflicts
+function handleServerResponse(serverQuotes) {
+    const newQuotes = serverQuotes.map(quote => ({
+        text: quote.title, // Simulating server data structure
+        category: 'General' // Default category for simulation
+    }));
+
+    // Simple conflict resolution: Server data takes precedence
+    quotes = newQuotes;
+    saveQuotes();
+    populateCategories();
+    showRandomQuote();
+    alert('Data updated from server.');
+}
+
+// Sync with the server periodically
+function startSyncing() {
+    fetchQuotesFromServer(); // Initial fetch
+    setInterval(fetchQuotesFromServer, syncInterval); // Periodic fetching
 }
 
 // Function to show a random quote
@@ -121,6 +157,7 @@ function initialize() {
     document.getElementById("importFile").addEventListener("change", importFromJsonFile);
 
     loadQuotes(); // Load quotes and last selected filter
+    startSyncing(); // Start syncing with the server
 }
 
 // Add event listener to "Show New Quote" button
