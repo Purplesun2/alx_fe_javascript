@@ -99,8 +99,25 @@ function addQuote() {
         saveQuotes(); // Save quotes to local storage
         populateCategories(); // Update categories dropdown
         showRandomQuote(); // Optionally display the new quote
+        postQuoteToServer({ text: newQuoteText, category: newQuoteCategory }); // Post new quote to server
     } else {
         alert("Please enter both quote and category.");
+    }
+}
+
+// Function to post a new quote to the server
+async function postQuoteToServer(quote) {
+    try {
+        await fetch(serverUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(quote)
+        });
+        notifyUser('Quote posted to server.');
+    } catch (error) {
+        console.error('Error posting quote to server:', error);
     }
 }
 
