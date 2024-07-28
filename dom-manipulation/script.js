@@ -6,7 +6,7 @@ let quotes = [
 ];
 
 // Function to display a random quote
-function displayRandomQuote() {
+function showRandomQuote() {
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const randomQuote = quotes[randomIndex];
     const quoteDisplay = document.getElementById("quoteDisplay");
@@ -35,14 +35,14 @@ function addQuote() {
         quotes.push({ text: newQuoteText, category: newQuoteCategory });
         document.getElementById("newQuoteText").value = '';
         document.getElementById("newQuoteCategory").value = '';
-        displayRandomQuote(); // Optionally display the new quote
+        showRandomQuote(); // Optionally display the new quote
     } else {
         alert("Please enter both quote and category.");
     }
 }
 
 // Add event listener to "Show New Quote" button
-document.getElementById("newQuote").addEventListener("click", displayRandomQuote);
+document.getElementById("newQuote").addEventListener("click", showRandomQuote);
 
 // Add event listener to "Add Quote" button
 document.querySelector("button[onclick='addQuote()']").addEventListener("click", addQuote);
