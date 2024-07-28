@@ -32,6 +32,7 @@ async function fetchQuotesFromServer() {
         handleServerResponse(serverQuotes);
     } catch (error) {
         console.error('Error fetching quotes from server:', error);
+        notifyUser('Error fetching quotes from server.');
     }
 }
 
@@ -47,7 +48,7 @@ function handleServerResponse(serverQuotes) {
     saveQuotes();
     populateCategories(); // Update categories dropdown
     showRandomQuote(); // Optionally display a quote
-    notifyUser('Data updated from server.'); // Notify user of update
+    notifyUser('Quotes synced with server!'); // Notify user of update
 }
 
 // Function to sync quotes with the server periodically
@@ -58,7 +59,15 @@ function syncQuotes() {
 
 // Notify user with an alert (or UI element)
 function notifyUser(message) {
-    alert(message); // Simple alert for notification
+    const notificationElement = document.getElementById('notification');
+    if (notificationElement) {
+        notificationElement.textContent = message;
+        setTimeout(() => {
+            notificationElement.textContent = '';
+        }, 5000); // Clear message after 5 seconds
+    } else {
+        alert(message); // Fallback to alert if no notification element
+    }
 }
 
 // Function to show a random quote
@@ -101,7 +110,7 @@ function addQuote() {
         showRandomQuote(); // Optionally display the new quote
         postQuoteToServer({ text: newQuoteText, category: newQuoteCategory }); // Post new quote to server
     } else {
-        alert("Please enter both quote and category.");
+        notifyUser("Please enter both quote and category.");
     }
 }
 
@@ -118,6 +127,7 @@ async function postQuoteToServer(quote) {
         notifyUser('Quote posted to server.');
     } catch (error) {
         console.error('Error posting quote to server:', error);
+        notifyUser('Error posting quote to server.');
     }
 }
 
