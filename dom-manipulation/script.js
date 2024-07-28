@@ -1,6 +1,6 @@
 let quotes = [];
-const serverUrl = 'https://jsonplaceholder.typicode.com/posts'; // Simulated server URL
-const syncInterval = 60000; // 60 seconds
+const serverUrl = 'https://jsonplaceholder.typicode.com/posts'; // Mock API URL
+const syncInterval = 60000; // 60 seconds for periodic sync
 
 // Load quotes and last selected category from local storage on page load
 function loadQuotes() {
@@ -24,13 +24,11 @@ function saveQuotes() {
     localStorage.setItem('quotes', JSON.stringify(quotes));
 }
 
-// Fetch quotes from the simulated server
+// Fetch quotes from the server and handle data
 async function fetchQuotesFromServer() {
     try {
-        const response = await fetch(serverUrl);
+        const response = await fetch(serverUrl); // Fetch quotes from mock API
         const serverQuotes = await response.json();
-        
-        // Simulate the server response containing quotes
         handleServerResponse(serverQuotes);
     } catch (error) {
         console.error('Error fetching quotes from server:', error);
@@ -40,22 +38,27 @@ async function fetchQuotesFromServer() {
 // Handle server response and resolve conflicts
 function handleServerResponse(serverQuotes) {
     const newQuotes = serverQuotes.map(quote => ({
-        text: quote.title, // Simulating server data structure
+        text: quote.title, // Mapping server response to our quote format
         category: 'General' // Default category for simulation
     }));
 
-    // Simple conflict resolution: Server data takes precedence
+    // Conflict resolution: Server data takes precedence
     quotes = newQuotes;
     saveQuotes();
-    populateCategories();
-    showRandomQuote();
-    alert('Data updated from server.');
+    populateCategories(); // Update categories dropdown
+    showRandomQuote(); // Optionally display a quote
+    notifyUser('Data updated from server.'); // Notify user of update
 }
 
-// Sync with the server periodically
-function startSyncing() {
+// Function to sync quotes with the server periodically
+function syncQuotes() {
     fetchQuotesFromServer(); // Initial fetch
-    setInterval(fetchQuotesFromServer, syncInterval); // Periodic fetching
+    setInterval(fetchQuotesFromServer, syncInterval); // Periodic fetch
+}
+
+// Notify user with an alert (or UI element)
+function notifyUser(message) {
+    alert(message); // Simple alert for notification
 }
 
 // Function to show a random quote
@@ -143,9 +146,9 @@ function importFromJsonFile(event) {
             saveQuotes();
             populateCategories(); // Update categories dropdown
             showRandomQuote(); // Optionally display a quote
-            alert('Quotes imported successfully!');
+            notifyUser('Quotes imported successfully!');
         } catch (e) {
-            alert('Failed to import quotes. Invalid JSON format.');
+            notifyUser('Failed to import quotes. Invalid JSON format.');
         }
     };
     fileReader.readAsText(event.target.files[0]);
@@ -157,7 +160,7 @@ function initialize() {
     document.getElementById("importFile").addEventListener("change", importFromJsonFile);
 
     loadQuotes(); // Load quotes and last selected filter
-    startSyncing(); // Start syncing with the server
+    syncQuotes(); // Start syncing with the server
 }
 
 // Add event listener to "Show New Quote" button
